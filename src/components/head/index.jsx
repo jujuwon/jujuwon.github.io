@@ -19,6 +19,10 @@ export function Head({ description, lang, meta, keywords, title }) {
             titleTemplate={`%s | ${data.site.siteMetadata.title}`}
             meta={[
               {
+                name: "google-site-verification",
+                content: "bq8iS5AK2WPGsKL7lcHbQx2aDDyfZjXO65m78yGYyBE"
+              },
+              {
                 name: `description`,
                 content: metaDescription,
               },
@@ -54,9 +58,9 @@ export function Head({ description, lang, meta, keywords, title }) {
               .concat(
                 keywords.length > 0
                   ? {
-                      name: `keywords`,
-                      content: keywords.join(`, `),
-                    }
+                    name: `keywords`,
+                    content: keywords.join(`, `),
+                  }
                   : []
               )
               .concat(meta)}
