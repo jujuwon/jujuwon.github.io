@@ -1,6 +1,6 @@
 ---
 title: 'Cgroup 이란?'
-date: 2021-07-02 17:50:13
+date: 2021-12-29 17:50:13
 category: 'Container'
 draft: false
 ---
