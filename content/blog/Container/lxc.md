@@ -1,9 +1,19 @@
 ---
-title: 'Cgroup 이란?'
-date: 2021-12-29 17:50:13
+title: 'LXC - Linux Container'
+date: 2022-01-03 14:55:13
 category: 'Container'
 draft: false
 ---
+
+Cgroup 과 Namespace 를 이용하면 Container 를 실현할 수 있다.
+
+Container 는 하나의 커널에서 관리하는 리소스를 복수의 그룹으로 분할한다.
+
+Container 에서 CPU 나 Memory 리소스는 Cgroup 으로 분할하고
+
+PID 나 IPC, 네트워크와 같은 자원은 Namespace 로 분할한다.
+
+## Cgroup
 
 - Control Groups provide a mechanism for aggregating/partitioning
 
@@ -15,7 +25,7 @@ draft: false
 
   a set of parameters for one or more subsystems.
 
-## Cgroup
+<br>
 
 **프로세스를 그룹화**해서 관리하기 위한 리눅스 커널의 기능이다.
 
@@ -28,8 +38,11 @@ cgroup 자체는 프로세스를 그룹화하기 위한 기능과
 구체적인 리소스 관리 기능은 cgroup subsystem 또는 컨트롤러 라고 한다.
 
 - cgroup subsystem 의 종류
+
   **Memory 컨트롤러** (메모리 제어), **CPU 컨트롤러** (프로세스 스케줄링 제어) 등
+
   실행 중인 커널에서 이용 가능한 cgroup subsystem 은 `/proc/cgroups` 에서
+
   확인이 가능하다.
   ![](./images/Screenshot_from_2021-12-29_16-03-33.png)
 
@@ -253,6 +266,45 @@ cat /tmp/cgroup-release-msg
 | tasks                | RW  | 그룹에 속하는 쓰레드의 PID 목록                                                                           |
 | cgroup.procs         |  R  | 그룹에 속하는 프로세스의 PID 목록. 멀티 쓰레드 프로세스의 쓰레드 그룹 리더 이외의 TID 는 포함되지 않는다. |
 | cgroup.event_control | RW  | 상태 갱신이나 그룹 삭제를 이벤트로 감시하기 위한 설정용 파일                                              |
+
+## Namespace
+
+Namespace 를 사용하면 프로세스 그룹별로 독립된 PID 나, IPC,
+
+네트워크 공간을 가질 수 있다.
+
+`clone` 시스템콜을 호출할 때 플래그를 설정하면 namespace 를 분할할 수 있다.
+
+예를 들어 PID namespace 를 분할하면 새롭게 만들어진 namespace 에서
+
+프로세스의 PID 는 1부터 시작한다.
+
+PID 가 1인 새로운 프로세스로부터 fork() 된 프로세스는 이 새로운 PID namespace 에 갇혀서
+
+다른 PID namespace 와는 단절된다.
+
+그 전에 생성한 PID namespace 에 존재하는 프로세스와 같은 PID 를 가질 수도 있지만,
+
+namespace 가 분할되어 있으므로 서로에게 영향을 주지는 않는다.
+
+마찬가지로 IPC, Network, File System mount 공간, UTS (Universal Time sharing System) 를
+
+대상으로 리소스 분할이 가능하다.
+
+<br>
+
+- 리소스 분할
+
+| 이름                                                 | 설명                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------ |
+| CLONE_NEWIPC                                         | IPC 간 namespace 분할. 세마포어나 공유메모리,                            |
+| 메시지큐 등 프로세스 간 통신에 쓰이는 리소스를 할당. |
+| CLONE_NEWNET                                         | 네트워크 namespace 를 분할. 네트워크 인터페이스를 할당.                  |
+| CLONE_NEWNS                                          | 마운트 이름을 분할. chroot 와 마찬가지로 새로운 root filesystem 을 할당. |
+| CLONE_NEWPID                                         | PID namespace 를 분할. 새로운 PID 공간을 할당.                           |
+| CLONE_NEWUTS                                         | UTS namespace 를 분할. 새로운 UTS 공간을 할당                            |
+
+<br>
 
 ---
 
