@@ -15,7 +15,7 @@ lang: 'en'
 
 ---
 
-📓 Github : [https://github.com/jujuwon](https://github.com/jujujwon)
+📓 Github : [https://github.com/jujuwon](https://github.com/jujuwon)
 
 <br>
 
